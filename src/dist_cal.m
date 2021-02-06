@@ -29,7 +29,7 @@ OB = oct1(5:8);
 % ==========================================
 % calculate the distance
 for i =1:24
-    q_rot = all_sym(1,:);
+    q_rot = all_sym(i,:);
     A = qmult(q_rot, OA);
     B = qmult(q_rot, OB);
     oct2 = [A,B];
