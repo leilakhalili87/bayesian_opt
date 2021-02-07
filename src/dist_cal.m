@@ -14,7 +14,7 @@ symnames = load('PGnames.mat'); %need to add crystal_symmetry_ops to path in ord
 symops = load('PGsymops.mat');
 all_sym = symops.Q{30}; % the quaternions of 24 symmetry operations
 
-olmx= importdata('orientations.txt'); % read the orientations
+olmx= importdata('orientations0.txt'); % read the orientations
 O1 = olmx(:,1:3);
 O = olmx(:,4:6);
 
@@ -30,7 +30,10 @@ OB = oct1(5:8);
 % ==========================================
 % calculate the distance
 for i =1:24
-    q_rot = all_sym(i,:);
+    q_rot0 = all_sym(i,:);
+    ax_ang = qu2ax(q_rot0);
+    ax_ang(4) = ax_ang(4) + .01;
+    q_rot = ax2qu(ax_ang);
     A = qmult(q_rot, OA);
     B = qmult(q_rot, OB);
     oct2 = [A,B];
