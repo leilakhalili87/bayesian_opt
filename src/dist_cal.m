@@ -18,7 +18,7 @@ olmx= importdata('orientations.txt'); % read the orientations
 O1 = olmx(:,1:3);
 O = olmx(:,4:6);
 
-aa_z = [1 0 0 pi/2];
+aa_z = [1 0  0 pi/2];
 om_z = ax2om(aa_z); %rotation matrix, BP y --> z 
 OA1 = (om_z*O1')'; %rotate row-wise, transpose to column form
 OB1 = (om_z*O')';
@@ -26,6 +26,7 @@ OB1 = (om_z*O')';
 oct1 = GBmat2oct(OA1,OB1); % covert the orietnation into quaternions
 OA = oct1(1:4);
 OB = oct1(5:8);
+
 % ==========================================
 % calculate the distance
 for i =1:24
