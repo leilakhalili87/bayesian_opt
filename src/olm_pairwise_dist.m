@@ -15,7 +15,10 @@ symops = load('PGsymops.mat');
 all_sym = symops.Q{30}; % the quaternions of 24 symmetry operations
 
 % import Olmsted dataset
-olmx = importdata('dat_leila.txt');
+% olmx = importdata('dat_leila.txt');
+olmimp = importdata('olmsted_xtal_info_numeric.csv');
+olmx = olmimp.data; ngb = length(olmx);
+feature_names = olmimp.textdata;
 [ngb, ~] = size(olmx);
 
 
@@ -39,44 +42,42 @@ for i = 1:ngb
     
     misorien = qu2om(qmult(OB, qinv(OA)));
     ax_ang = qu2ax(misorien);
-    ax = ax_ang(:,1:3);
+    ax = ax_ang(:,1:3)/norm(ax_ang(:,1:3));
     angle = ax_ang(:,4);
     [Theta,R] = stereo(ax);
     x(i) = R*sin(angle)*cos(Theta);
     y(i) = R*sin(angle)*sin(Theta);
     z(i) = R*cos(angle);
     
-    all_oct(i, :) = oct;
+%     all_oct(i, :) = oct;
+%     if i >1
+%         oct_pair(i, :) = [all_oct(1,:), oct]; 
+%     end
 end
+test = importdata('../data/olm_octonion_list.txt',' ',1); %list of GB octonions with number of octonions as first line in file
+data0 = test.data;
 
-% 
-% olmx= importdata('all_orientations.txt'); % read the orientations
-% [size_data, ~] = size(olmx);
-% size_data = size_data/3;
-% 
-% OL_ref = olmx(1:3,1:3);
-% OU_ref = olmx(4:6,4:6);
-% 
-% aa_z = [1 0 0 pi/2];
-% om_z = ax2om(aa_z); %rotation matrix, BP y --> z 
-% 
-% R_L_ref = (om_z*OL_ref')'; %rotate row-wise, transpose to column form
-% R_U_ref = (om_z*OU_ref')';
-% oct_ref = GBmat2oct(R_L_ref,R_U_ref); % covert the orietnation into quaternions
+% as a simple example, we will fold the Olmsted dataset in half to give a 194x16 matrix of GB pairs
+data = zeros(388,16);
+for i=1:388
+    data(i,1:8) = data0(1,:);
+end
+data(:,9:16) = data0(1:388,:);
 
-% 
-% for i=2:size_data
-%     init_val = 3*(i-1) + 1;
-%     fin_val = init_val + 2;
-%     OL = olmx(init_val:fin_val, 1:3);
-%     OU = olmx(init_val:fin_val, 4:6);
-%     R_L = (om_z*OL')'; %rotate row-wise, transpose to column form
-%     R_U = (om_z*OU')';
-%     oct_dum = GBmat2oct(R_L,R_U); % covert the orietnation into quaternions
-%     all_oct(i-1, :) = oct_dum;
-% end
-oldpd = []; oldoct = [];
-fname = 'little_test.txt';printbool = true;
-pdtest = GBpd(oldpd,oldoct,all_oct,pgnum,printbool,fname);
+pgnum = 30; %cubic symmetry
+genplot = false;
 
-scatter3(x, y, z,41,  pdtest(1,:), 'filled')
+%this takes 48.2 seconds on a single core (which is quite slow). A much faster implementation of a
+%similar routine can be found in the EMSOFT programs EMGBO / EMGBOdm
+
+tic 
+[omega_test, oct_test, zeta_test] = GBdist(data, pgnum, genplot);
+toc 
+
+figure
+scatter3(x, y, z, 388,  omega_test, 'filled')
+xlabel('x')
+ylabel('y')
+zlabel('z')
+colorbar('Location', 'EastOutside', 'YTickLabel',...
+    {'0', '.25', '.5', '.75','1'})
