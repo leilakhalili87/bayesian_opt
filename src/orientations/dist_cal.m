@@ -14,11 +14,21 @@ symnames = load('PGnames.mat'); %need to add crystal_symmetry_ops to path in ord
 symops = load('PGsymops.mat');
 all_sym = symops.Q{30}; % the quaternions of 24 symmetry operations
 
-olmx= importdata('orientations0.txt'); % read the orientations
-O1 = olmx(:,1:3);
-O = olmx(:,4:6);
+% olmx= importdata('orientations0.txt'); % read the orientations
+% O1 = olmx(:,1:3);
+% O = olmx(:,4:6);
+olmimp = importdata('olmsted_xtal_info_numeric.csv');
+olmx = olmimp.data; ngb = length(olmx);
+feature_names = olmimp.textdata;
+[ngb, ~] = size(olmx);
 
-aa_z = [1 0  0 pi/2];
+
+% extract indices of orientation matrices as N_GB x 9 matrices
+O1mat = olmx(:,[5:7 11:13 17:19]);
+O2mat = olmx(:,[8:10 14:16 20:22]);
+O1 = reshape(O1mat(3,:),[3,3]);
+O = reshape(O2mat(3,:),[3,3]);
+aa_z = [0 1  0 pi/2];
 om_z = ax2om(aa_z); %rotation matrix, BP y --> z 
 OA1 = (om_z*O1')'; %rotate row-wise, transpose to column form
 OB1 = (om_z*O')';

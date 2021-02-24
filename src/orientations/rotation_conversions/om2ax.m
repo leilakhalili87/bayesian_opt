@@ -39,10 +39,10 @@ else
             
             if ((om(2,3)-om(3,2))~=0.0) 
                 s = sign(-epsijk*(om(2,3)-om(3,2)));
-                epsijk
-                om(2,3)
-                om(3,2)
-                q(1)
+                epsijk;
+                om(2,3);
+                om(3,2);
+                q(1);
 
                 q(1) = s*abs(q(1));
             end

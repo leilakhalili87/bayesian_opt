@@ -145,7 +145,8 @@ for k = 1:length(pair_list)
                       
 %                   % take minimum omega value and corresponding symmetrized octonion
                     [omega_test,iwmin] = min(wvec);
-                    zeta_sym = [zm1 sm1 zm2 sm2 zm1 sm1 zm2 sm2];  
+                    zeta_sym = [zm1 sm1 zm2 sm2 zm1 sm1 zm2 sm2];
+
                     
                     if (omega_test) <= omega_keep+1e-5 
                         
